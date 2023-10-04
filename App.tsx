@@ -5,9 +5,11 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
+import {LogLevel, OneSignal} from 'react-native-onesignal';
 import {
+  PermissionsAndroid,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -55,12 +57,45 @@ function Section({children, title}: SectionProps): JSX.Element {
   );
 }
 
+OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+// TODO: INIT!
+OneSignal.initialize('xxx');
+
+const logSubId = async () => {
+  const initSubId = OneSignal.User.pushSubscription.getPushSubscriptionId();
+  console.log('init subId: ', initSubId);
+
+  // const isPermissionGranted = await OneSignal.Notifications.requestPermission(
+  //   true,
+  // );
+
+  const permissionResponse = await PermissionsAndroid.request(
+    'android.permission.POST_NOTIFICATIONS',
+  );
+  console.log('permissionResponse: ', permissionResponse);
+  const isPermissionGranted = permissionResponse === 'granted';
+
+  console.log('isPermissionGranted: ', isPermissionGranted);
+
+  if (isPermissionGranted) {
+    const subId = OneSignal.User.pushSubscription.getPushSubscriptionId();
+    console.log('next subId: ', subId);
+
+    const isOptIn = OneSignal.User.pushSubscription.getOptedIn();
+    console.log('isOptIn: ', isOptIn);
+  }
+};
+
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  useEffect(() => {
+    logSubId();
+  }, []);
 
   return (
     <SafeAreaView style={backgroundStyle}>

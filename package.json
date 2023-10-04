@@ -7,11 +7,19 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "restart": "yarn reinstall && yarn start --reset-cache",
+    "reinstall": "yarn js-reinstall && yarn ios-reinstall",
+    "js-reinstall": "yarn cache clean && rm -rf node_modules && watchman watch-del-all && yarn",
+    "ios-reinstall": "yarn pod-clean && yarn pod-install",
+    "pod-clean": "rm -rf ~/Library/Caches/CocoaPods && cd ./ios && rm -rf Pods && rm -rf build && cd ..",
+    "pod-install": "cd ./ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd ..",
+    "reverse-port": "adb reverse tcp:8081 tcp:8081"
   },
   "dependencies": {
     "react": "18.2.0",
-    "react-native": "0.72.5"
+    "react-native": "0.72.5",
+    "react-native-onesignal": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
