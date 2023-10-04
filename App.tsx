@@ -65,15 +65,15 @@ const logSubId = async () => {
   const initSubId = OneSignal.User.pushSubscription.getPushSubscriptionId();
   console.log('init subId: ', initSubId);
 
-  // const isPermissionGranted = await OneSignal.Notifications.requestPermission(
-  //   true,
-  // );
-
-  const permissionResponse = await PermissionsAndroid.request(
-    'android.permission.POST_NOTIFICATIONS',
+  const isPermissionGranted = await OneSignal.Notifications.requestPermission(
+    true,
   );
-  console.log('permissionResponse: ', permissionResponse);
-  const isPermissionGranted = permissionResponse === 'granted';
+
+  // const permissionResponse = await PermissionsAndroid.request(
+  //   'android.permission.POST_NOTIFICATIONS',
+  // );
+  // console.log('permissionResponse: ', permissionResponse);
+  // const isPermissionGranted = permissionResponse === 'granted';
 
   console.log('isPermissionGranted: ', isPermissionGranted);
 
