@@ -32,3 +32,9 @@ yarn android
    2. Incoming Call Activity will disappear
 5. Unlock the Phone and check `collapsed` apps
    1. `CallUIActivity` will be shown there and it's impossible to `finish` it (try to open and press `Decline` again)
+
+---
+
+### Repro of the issue
+
+<video src="video-repro.mp4" width="350" controls title="Title"></video>
