@@ -37,4 +37,7 @@ yarn android
 
 ### Repro of the issue
 
-<video src="video-repro.mp4" width="350" controls title="Title"></video>
+
+<video src="https://github.com/sharekey/onesignal-issue/assets/25362437/81b763ec-9970-45e4-8784-b43562d64a4f" width="350" controls title="Title"></video>
+
+
