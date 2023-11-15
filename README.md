@@ -15,3 +15,20 @@ Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _roo
 ```bash
 yarn android
 ```
+
+## Step 3: Updated appId
+
+* Create `./credentials.json` file with `appId` in the project root
+* or alternatively at `./App.tsx` you can remove `import {appId} from './credentials.json';` (line 27) and directly update `appId` at `OneSignal.initialize(appId);` (line 60)
+
+## Step 4: Reproduce the issue
+1. Launch the app and retrieve `subscriptionId` from the `console.log`, or from the screen
+2. `Close` the App and `lock` the screen
+3. `Send Push Notification` from your OneSignal App
+   1. Send one more if nothing will be shown, because sometimes it does not show if the process is not started
+   2. `CallUIActivity` will be shown on your lock screen
+4. `Decline` the "call" -> 
+   1. `finish` inside `CallUIActivity` will be called
+   2. Incoming Call Activity will disappear
+5. Unlock the Phone and check `collapsed` apps
+   1. `CallUIActivity` will be shown there and it's impossible to `finish` it (try to open and press `Decline` again)
