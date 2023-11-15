@@ -5,11 +5,14 @@
  * @format
  */
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import type {PropsWithChildren} from 'react';
-import {LogLevel, OneSignal} from 'react-native-onesignal';
 import {
-  PermissionsAndroid,
+  LogLevel,
+  OSNotificationPermission,
+  OneSignal,
+} from 'react-native-onesignal';
+import {
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -19,13 +22,9 @@ import {
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
+
+import {appId} from './credentials.json';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -58,32 +57,36 @@ function Section({children, title}: SectionProps): JSX.Element {
 }
 
 OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-// TODO: INIT!
-OneSignal.initialize('xxx');
+OneSignal.initialize(appId);
 
-const logSubId = async () => {
-  const initSubId = OneSignal.User.pushSubscription.getPushSubscriptionId();
-  console.log('init subId: ', initSubId);
+const useSubscription = () => {
+  const [subId, setSubId] = useState('');
+  const [isOptId, setOptIn] = useState(false);
 
-  const isPermissionGranted = await OneSignal.Notifications.requestPermission(
-    true,
-  );
+  useEffect(() => {
+    const initializeData = async () => {
+      const permissionStatus = await OneSignal.Notifications.permissionNative();
+      console.log('permissionStatus: ', permissionStatus);
 
-  // const permissionResponse = await PermissionsAndroid.request(
-  //   'android.permission.POST_NOTIFICATIONS',
-  // );
-  // console.log('permissionResponse: ', permissionResponse);
-  // const isPermissionGranted = permissionResponse === 'granted';
+      const shouldRequestPermission =
+        permissionStatus === OSNotificationPermission.NotDetermined ||
+        permissionStatus === OSNotificationPermission.Provisional;
+      console.log('shouldRequestPermission: ', shouldRequestPermission);
 
-  console.log('isPermissionGranted: ', isPermissionGranted);
+      if (shouldRequestPermission) {
+        await OneSignal.Notifications.requestPermission(true);
+      }
 
-  if (isPermissionGranted) {
-    const subId = OneSignal.User.pushSubscription.getPushSubscriptionId();
-    console.log('next subId: ', subId);
+      const subId = OneSignal.User.pushSubscription.getPushSubscriptionId();
+      setSubId(subId);
 
-    const isOptIn = OneSignal.User.pushSubscription.getOptedIn();
-    console.log('isOptIn: ', isOptIn);
-  }
+      const isOptIn = OneSignal.User.pushSubscription.getOptedIn();
+      setOptIn(isOptIn);
+    };
+    initializeData();
+  }, []);
+
+  return [subId, isOptId];
 };
 
 function App(): JSX.Element {
@@ -93,9 +96,7 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  useEffect(() => {
-    logSubId();
-  }, []);
+  const [subscriptionId, isOptIn] = useSubscription();
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -111,20 +112,8 @@ function App(): JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+          <Section title="Subscription Id">{subscriptionId}</Section>
+          <Section title="Is Opt In">{isOptIn ? 'YES' : 'NO'}</Section>
         </View>
       </ScrollView>
     </SafeAreaView>

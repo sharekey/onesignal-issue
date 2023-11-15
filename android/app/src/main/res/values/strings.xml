@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">oneIssue</string>
+    <string name="answer_button">Accept</string>
+    <string name="decline_button">Decline</string>
+    <string name="incoming_call_title">User</string>
+    <string name="incoming_call_subtitle">is calling you</string>
 </resources>
